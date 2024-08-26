@@ -1,0 +1,15 @@
+{
+  "name": "gamma",
+  "version": "1.0.0",
+  "description": "Software tool to analyze gamma data",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jashwanth Gajjala",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.4.0"
+  }
+}
