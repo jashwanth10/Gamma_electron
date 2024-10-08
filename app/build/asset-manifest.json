@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5ff7d336.css",
+    "main.js": "/static/js/main.f919a024.js",
+    "static/js/453.a6a97343.chunk.js": "/static/js/453.a6a97343.chunk.js",
+    "static/media/nuclear-sign-icon.svg": "/static/media/nuclear-sign-icon.465d004eb1e509570f32b63b1a84b07d.svg",
+    "index.html": "/index.html",
+    "main.5ff7d336.css.map": "/static/css/main.5ff7d336.css.map",
+    "main.f919a024.js.map": "/static/js/main.f919a024.js.map",
+    "453.a6a97343.chunk.js.map": "/static/js/453.a6a97343.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5ff7d336.css",
+    "static/js/main.f919a024.js"
+  ]
+}
