@@ -119,7 +119,6 @@ function parseCnfContent(buffer) {
       switch (secIdHeader) {
         case 0x00012000:
           offs_param = secLoc
-          console.log("Hi: ", offs_param);
           Object.assign(readData, getEnergyCalibration(buffer, offs_param));
           Object.assign(readData, getDateTime(buffer, offs_param));
           Object.assign(readData, getShapeCalibration(buffer, offs_param));

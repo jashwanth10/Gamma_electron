@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import radiation_svg from '../svg/nuclear-sign-icon.svg';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { setFileData } from "../features/fileDataSlice";
+import Dashboard from "../components/dashboard";
+import DataTable from "../components/DataTable";
 
 const {readCnfFile} = require("../util/cnf_reader");
 
-function Home() {
+function Ref() {
     const [file, setFile] = useState(null);
     const [data, setData] = useState(null);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
+    const tableData = location.state?.peakPlotData || [];
+    console.log(tableData);
+
+    const users = [
+        { id: 1, name: 'Alice', role: 'Admin', status: 'Active' },
+        { id: 2, name: 'Bob', role: 'User', status: 'Inactive' },
+        { id: 3, name: 'Charlie', role: 'Manager', status: 'Active' },
+      ];
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
@@ -28,47 +39,25 @@ function Home() {
                 setData(readDic);
                 
                 // Set file data in redux and navigate
-                dispatch(setFileData({ 
-                    fileName: selectedFile['name'],
-                    channelData: readDic['Channels data'],
-                    channels: readDic['Channels'],
-                    energy: readDic['Energy'],
-                    energyCoefficients: readDic['Energy coefficients'],
-                    liveTime: readDic['Live time'],
-                    realTime: readDic['Real time'],
-                    shapeCoefficients: readDic['Shape coefficients']
-                }));
-                navigate('/initial-calibration');
+               
             } catch (error) {
                 console.error('Error reading file:', error);
             }  
         }
     };
 
-    const handleFileUpload = async () => {
-        if (file) {
-           
-        };
+    const handleNext = () => {
+        navigate('/analysis');
+    }
 
-    };
-
-    useEffect(() => {
-        if(data){
-           
-        }
-    }, [data])
     
     return (
         <div class="flex flex-col justify-center items-center h-screen">
-            
-            <img width={250} height={250} style={{padding: '20px'}} src={radiation_svg} />
             <div class="text-5xl mb-8">
-                Welcome to Gamma
+                Intensity values
             </div>
-            <div class="text-2xl mb-8">
-                Load sample spectrum file (.CNF):
-            </div>
-            <input type="file" class="file-input file-input-bordered file-input-accent w-full max-w-xs" onChange={handleFileChange}/>
+            <DataTable data={tableData} />
+            <Dashboard handlerNext={handleNext}/>
            
         </div>
         
@@ -77,4 +66,4 @@ function Home() {
     )
 }
 
-export default Home;
+export default Ref;

@@ -10,6 +10,7 @@ import LineGraph from "../components/lineGraph";
 import Dropdown from "../components/dropDown";
 import Dashboard from "../components/dashboard";
 import ValidationOptions from "../components/validation-options";
+import InfoIconWithTooltip from "../components/tooltip";
 
 
 function Validation() {
@@ -30,14 +31,15 @@ function Validation() {
     const [overlayOpen, setOverlayOpen] = useState(false);
     const [peakPlotData, setPeakPlotData] = useState(null);
     const [overlays, setOverlays] = useState(null);
-
+    const [coeffs, setCoeffs] = useState([]);
 
     useEffect(() => {
         setDropDownData(activeProfileData.map((isotope) => isotope.name));
-        const processor = new Processor(fileData);
-        console.log(activeProfileData);
-        processor.analyze(activeProfileData);
+        const processor = new Processor(fileData, activeProfileData);
+        processor.analyze();
         console.log(processor);
+        const dat = processor.performPeakAnalysis(activeProfileData);
+        setPeakPlotData(dat);
         setProcessorObj(processor);
         calculateResidualData(processor);
         calculateFWHMCurve(processor);
@@ -61,7 +63,6 @@ function Validation() {
             y: residual
           }));
 
-        console.log(graphData);
           
         setResidualData(graphData);
     }
@@ -155,7 +156,6 @@ function Validation() {
     const handleAnalyze = () => {
         const dat = processorObj.performPeakAnalysis(activeProfileData);
         setPeakPlotData(dat);
-        console.log("Peaakplot: ", dat);
         setOverlayOpen(!overlayOpen);
         let sett = false;
         for(let i = 0; i < dat.length; i++){
@@ -167,6 +167,19 @@ function Validation() {
         }
         if (overlayOpen && !sett) setCurrentScreen(0);
     };
+
+    const handleNext = () => {
+        navigate('/ref', {state: {peakPlotData}});
+    };
+
+
+    const handlerInteration = () => {
+        processorObj.optimizeCoefficients();
+        setProcessorObj(processorObj);
+        calculateResidualData(processorObj);
+        calculateFWHMCurve(processorObj);
+        calculateFittingCurve(processorObj);
+    }
     
     return (
         <div class="w-full h-[100vh] flex flex-col justify-center items-center">
@@ -186,7 +199,7 @@ function Validation() {
                 <div class="w-full h-[75vh] bg-base-200 p-6 rounded-lg flex flex-row items-center justify-between">
                     <div class="w-full h-full flex flex-col justify-center items-center">
                         <div class="text-3xl mb-8">
-                                Fitting Curve
+                                Energy Calibraation
                             </div>
                             {fittingData && (<LineGraph data={fittingData} xAxis={'peaks'} yAxis={'energies'} radius={5} xlabel={'Channel'} ylabel={'Energy (keV)'}/>)}
                     </div>
@@ -194,17 +207,20 @@ function Validation() {
                         
                         <div class="w-full h-full flex flex-col justify-center items-center ">
                                 <div class="text-3xl mb-8">
-                                    Residual Plot
                                 </div>
                                 <ScatterGraph data={residualData} xlabel={'Energy (keV)'} ylabel={'Residual (keV)'}/>
+                                 <InfoIconWithTooltip chart={"residual"}/>
+
                         </div>
                         <div class="w-full h-full flex flex-col justify-center items-center ">
                                 <div class="text-3xl mb-8">
-                                    FWHM plot
                                 </div>
                                 {refData && fwhmData && (
                                     <ScatterAndLineGraph data1={refData} data2={fwhmData} xlabel={'Energy (keV)'} ylabel={'FWHM (keV)'}/>
+                                
                                 )}
+                                    <InfoIconWithTooltip chart={"FWHM"}/>
+
                         </div>
                     </div>  
                 </div>
@@ -215,11 +231,11 @@ function Validation() {
                             <div className="modal-box w-3/4 max-w-full">
                                     <div className="w-full h-[75vh] modal-action flex flex-col items-center justify-center">
                                         <div class="text-5xl mb-8">
-                                            {peakPlotData[currentScreen]["name"].split("_")[0] + " (" + peakPlotData[currentScreen]["name"].split("_")[1] + "keV)"}
+                                            {peakPlotData[currentScreen]["name"].split("_")[0].split("-")[1] + peakPlotData[currentScreen]["name"].split("-")[0].split("_")[0] + " (" + peakPlotData[currentScreen]["name"].split("_")[1] + "keV)"}
                                         </div>
                                         <LineGraph radius={0} xlabel={'Energy (keV)'} ylabel={'Counts'} datasets={peakPlotData[currentScreen]["plotData"]} labels={peakPlotData[currentScreen]["labels"]}/>
                                         <div class="text-3xl mb-8">
-                                            Peak Intensity = {peakPlotData[currentScreen]["sigma"].toFixed(2)} +/- {Math.abs(peakPlotData[currentScreen]["intensity"].toFixed(2))}
+                                            Peak Intensity = {Math.abs(peakPlotData[currentScreen]["intensity"].toFixed(0))} +/- {peakPlotData[currentScreen]["sigma"].toFixed(0)}
                                         </div>
                                         <div className="flex flex-row space-x-12">
                                             <button onClick={goToPreviousScreen} className="btn btn-primary">
@@ -238,8 +254,8 @@ function Validation() {
                                 </div>
                                 </div>
             )}
-            <ValidationOptions/>
-            <Dashboard/>
+            <ValidationOptions handlerInteration={handlerInteration}/>
+            <Dashboard handlerNext={handleNext}/>
             
         </div>        
         

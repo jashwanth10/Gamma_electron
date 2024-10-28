@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Dashboard = ({handlerNext}) => {
+const Dashboard = ({handlerNext, showNext=true}) => {
   const navigate = useNavigate();
 
   const handlePrev = () => {
@@ -21,12 +21,13 @@ const Dashboard = ({handlerNext}) => {
   };
 
   return (
-    <div className="left-0 w-full flex justify-center p-4 bg-base-100">
+      <div className="left-0 w-full flex justify-center p-4 bg-base-100">
         <div className="space-x-4">
             <button className="btn btn-primary z-10" onClick={handlePrev}>Prev</button>
-            <button className="btn btn-primary z-10" onClick={() => handlerNext()}>next</button>
+            {showNext && ( <button className="btn btn-primary z-10" onClick={() => handlerNext()}>Next</button>)}
         </div>
-    </div> 
+      </div> 
+   
   );
 };
 

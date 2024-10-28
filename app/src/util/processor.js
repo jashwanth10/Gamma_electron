@@ -1,7 +1,8 @@
 export class Processor {
-    constructor(data, name) {
+    constructor(data, aciveProfileData, name) {
       this.data = data;
       this.name = name;
+      this.aciveProfileData = aciveProfileData;
       this.channels = this.data['channels'];
       this.counts = this.data['channelData'];
       this.energies = this.data['energy'];
@@ -20,25 +21,24 @@ export class Processor {
       this.channelsPortion = {};
       this.sigma = {};
       this.intensity = {};
+
+      this.A0 = this.data["energyCoefficients"][0]
+      this.A1 = this.data["energyCoefficients"][1]
+      this.A2 = this.data["energyCoefficients"][2]
+
     }
   
-    analyze(isotopeData) {
-      this.calculateInterestRegion(isotopeData);
-      this.calculateFwhm(isotopeData);
-      this.calculatePeakPositions(isotopeData);
-      this.calculateNarrowPeakPortion(isotopeData);
+    analyze() {
+      this.calculateInterestRegion(this.aciveProfileData);
+      this.calculateFwhm(this.aciveProfileData);
+      this.calculatePeakPositions(this.aciveProfileData);
+      this.calculateNarrowPeakPortion(this.aciveProfileData);
     }
   
     peakCalibration(pos) {
-      return this.data["energyCoefficients"][0] * (pos ** 0) +
-             this.data["energyCoefficients"][1] * (pos ** 1) +
-             this.data["energyCoefficients"][2] * (pos ** 2);
-    }
-
-    peakCalibrationCoeff(coeff, pos) {
-      return coeff[0] * (pos ** 0) +
-             coeff[1] * (pos ** 1) +
-             coeff[2] * (pos ** 2);
+      return this.A0 * (pos ** 0) +
+             this.A1 * (pos ** 1) +
+             this.A2 * (pos ** 2);
     }
   
     extractPortions(lower, upper) {
@@ -71,7 +71,7 @@ export class Processor {
           ))
         };
         let temp_sum = 0;
-          for(var i=0;i<this.coupsNet[isotope["name"] + "_" + isotope["energy"]].length;i++){
+        for(var i=0;i<this.coupsNet[isotope["name"] + "_" + isotope["energy"]].length;i++){
           temp_sum += this.coupsNet[isotope["name"] + "_" + isotope["energy"]][i] * this.channelsPortion[isotope["name"] + "_" + isotope["energy"]][i];
         }
         temp_sum /= this.sum(this.coupsNet[isotope["name"] + "_" + isotope["energy"]]);
@@ -101,12 +101,28 @@ export class Processor {
     }
 
     optimizeCoefficients() {
-      this.data["energy"].forEach((_, ind) => {
-        this.data["energy"][ind] = this.peakCalibrationCoeff(this.newCoeff, this.data["channels"][ind]);
-      })
+      this.calculateNewCoeff();
+      this.energies = this.channels.map(x => this.peakCalibration(x));
+      this.analyze()
     }
 
     calculateNewCoeff() {
+      const profileEnergies = this.aciveProfileData.map((x) => +x["energy"]);
+      const M3 = this.sum(Object.values(this.peaks));
+      const M4 = Object.keys(this.peaks).length;
+      const M5 = this.sum(Object.values(profileEnergies));
+      const M6 = this.sumSq(Object.values(this.peaks));
+      const M7 = this.sumQu(Object.values(this.peaks));
+      const M8 = this.sumPow4(Object.values(this.peaks));
+      const M9 = this.sumProd(profileEnergies, Object.values(this.peaks));
+      const M10 = this.sumProdSquare(profileEnergies, Object.values(this.peaks));
+
+      const M12 = M4*(M6*M8-M7*M7) - M3*(M3*M8-M6*M7) + M6*(M3*M7-M6*M6);
+
+      this.A0 = (M5*(M6*M8-M7*M7)+M9*(M7*M6-M3*M8)+M10*(M3*M7-M6*M6) )/M12;
+      this.A1 = ( M5*(M6*M7-M3*M8)+M9*(M4*M8-M6*M6)+M10*(M3*M6-M4*M7) )/M12;
+      this.A2 = ( M5*(M3*M7-M6*M6)+M9*(M3*M6-M4*M7)+M10*(M4*M6-M3*M3) )/M12
+
     }
   
     calculateFwhm(isotopeData) {
@@ -203,8 +219,6 @@ export class Processor {
         a = this.updateArray2(a, this.bfStep[isotope["name"] + "_" + isotope["energy"]], leftIndex, rightIndex);
         const y3 = a.slice(this.interestRegionIndices[isotope["name"] + "_" + isotope["energy"]][0], this.interestRegionIndices[isotope["name"] + "_" + isotope["energy"]][1]);
         const y4 = y1.map((v,i) => y3[i] !== 0 ? v - y3[i] : 0);
-        console.log(isotope["name"]);
-        console.log(y1, y3, y4);
 
         returnData.push({
             "id": index,
@@ -234,6 +248,26 @@ export class Processor {
   
     sum(array) {
       return array.reduce((acc, val) => acc + val, 0);
+    }
+
+    sumSq(array) {
+      return array.reduce((acc, val) => acc + val*val, 0);
+    }
+
+    sumQu(array) {
+      return array.reduce((acc, val) => acc + val*val*val, 0);
+    }
+
+    sumPow4(array) {
+      return array.reduce((acc, val) => acc + val*val*val*val, 0);
+    }
+
+    sumProd(array1, array2) {
+      return array1.reduce((acc, val, ind) => acc + val*array2[ind], 0);
+    }
+
+    sumProdSquare(array1, array2) {
+      return array1.reduce((acc, val, ind) => acc + val*array2[ind]*array2[ind], 0);
     }
 
     updateArray(a, sourceArray, leftIndex, rightIndex) {
