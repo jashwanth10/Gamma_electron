@@ -1,52 +1,55 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import radiation_svg from '../svg/nuclear-sign-icon.svg';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { setFileData } from "../features/fileDataSlice";
 import Dashboard from "../components/dashboard";
 import DataTable from "../components/DataTable";
+import { Processor } from "../util/processor";
 
 const {readCnfFile} = require("../util/cnf_reader");
 
 function Ref() {
     const [file, setFile] = useState(null);
     const [data, setData] = useState(null);
+    const [activityPeaksData, setActivityPeaksData] = useState(null);
+    const [processor, setProcessor] = useState(null);
+    const [activityPeaksTable, setActivityPeaksTable] = useState(null);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const location = useLocation();
     const tableData = location.state?.peakPlotData || [];
-    console.log(tableData);
+    const energies = location.state?.energies || [];
+    const channels = location.state?.channels || [];
+    const counts = location.state?.counts || [];
 
-    const users = [
-        { id: 1, name: 'Alice', role: 'Admin', status: 'Active' },
-        { id: 2, name: 'Bob', role: 'User', status: 'Inactive' },
-        { id: 3, name: 'Charlie', role: 'Manager', status: 'Active' },
-      ];
+    useEffect(() => {
+        fetchData();
 
-    const handleFileChange = async (event) => {
-        const selectedFile = event.target.files[0];
-        if (selectedFile) {
-            
-            setFile(selectedFile);
-            const formData = new FormData();
-            formData.append('file', selectedFile);
+        const proc = new Processor();
+        proc.energies = energies;
+        proc.channels = channels;
+        proc.counts = counts;
+        setProcessor(proc)
+        // fetch required peaks details;
+    }, [])
 
-            try {
-                // Process CNF file details
-                const { readDic, nameWithDate } = await readCnfFile(selectedFile, false);
-                setData(readDic);
-                
-                // Set file data in redux and navigate
-               
-            } catch (error) {
-                console.error('Error reading file:', error);
-            }  
+    useEffect(() => {
+        if(processor !== null){
+            const data = processor.activityCalculationStepOne(activityPeaksData);
+            console.log(tableData);
+            console.log(data);
+            setActivityPeaksTable(data);
         }
-    };
+    },[activityPeaksData])
+
+    const fetchData = async () => {
+        const doc = await window.api.getData("activityPeaksDb", {});
+        setActivityPeaksData(doc);
+    }
 
     const handleNext = () => {
+        
         navigate('/analysis');
     }
 
@@ -56,7 +59,7 @@ function Ref() {
             <div class="text-5xl mb-8">
                 Intensity values
             </div>
-            <DataTable data={tableData} />
+            {activityPeaksTable && <DataTable data={activityPeaksTable} />}
             <Dashboard handlerNext={handleNext}/>
            
         </div>

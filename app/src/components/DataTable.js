@@ -9,6 +9,7 @@ const DataTable = ({ data }) => {
           <tr>
             <th className="text-left">#</th>
             <th>Name</th>
+            <th>Energy (keV)</th>
             <th>Intensity</th>
             <th>Sigma</th>
           </tr>
@@ -18,6 +19,7 @@ const DataTable = ({ data }) => {
             <tr key={item.id}>
               <th>{index + 1}</th>
               <td>{item["name"].split("_")[0]}</td>
+              <td>{(+item["name"].split("_")[1]).toFixed(0)}</td>
               <td>{item["intensity"].toFixed(0)}</td>
               <td>{item["sigma"].toFixed(0)}</td>
             </tr>

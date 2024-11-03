@@ -5,11 +5,13 @@ import LineGraph from "../components/lineGraph";
 import { useNavigate } from "react-router-dom";
 import Dashboard from "../components/dashboard";
 import TextBox from "../components/textbox";
+import { setSampleData } from "../features/sampleData";
 
 
 function Initial() {
 
     const fileData = useSelector((state) => state.fileData);
+    const sampleData = useSelector((state) => state.sampleData);
 
     const [weight, setWeight] = useState("");
     const [error, setError] = useState("");
@@ -38,6 +40,11 @@ function Initial() {
         if(weight == ""){
             setError("Please enter the sample weight");
         }else{
+            setSampleData({
+                "weight": weight,
+                "liveTime": fileData["liveTime"],
+                "deadTime": fileData["realTime"]
+            })
             navigate('/profile')
         }
     }

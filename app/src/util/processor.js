@@ -1,5 +1,5 @@
 export class Processor {
-    constructor(data, aciveProfileData, name) {
+    constructor(data={}, aciveProfileData={}, name='default') {
       this.data = data;
       this.name = name;
       this.aciveProfileData = aciveProfileData;
@@ -22,17 +22,28 @@ export class Processor {
       this.sigma = {};
       this.intensity = {};
 
-      this.A0 = this.data["energyCoefficients"][0]
-      this.A1 = this.data["energyCoefficients"][1]
-      this.A2 = this.data["energyCoefficients"][2]
-
+      // this.A0 = this.data["energyCoefficients"][0]
+      // this.A1 = this.data["energyCoefficients"][1]
+      // this.A2 = this.data["energyCoefficients"][2]
+      this.A0 = -0.142243060813477;
+      this.A1 = 0.189584314029758;
+      this.A2 =  2.86540639520303 * Math.pow(10, -9);
     }
   
     analyze() {
+      this.energies = this.channels.map(x => this.peakCalibration(x));
       this.calculateInterestRegion(this.aciveProfileData);
       this.calculateFwhm(this.aciveProfileData);
       this.calculatePeakPositions(this.aciveProfileData);
       this.calculateNarrowPeakPortion(this.aciveProfileData);
+    }
+
+    activityCalculationStepOne (peakData) {
+      this.calculateInterestRegion(peakData);
+      this.calculateFwhm(peakData);
+      this.calculatePeakPositions(peakData);
+      this.calculateNarrowPeakPortion(peakData);
+      return this.performPeakAnalysis(peakData);
     }
   
     peakCalibration(pos) {
@@ -43,7 +54,7 @@ export class Processor {
   
     extractPortions(lower, upper) {
       const lowerInd = this.minIndexGreaterThan(this.energies, lower);
-      const upperInd = this.maxIndexLessThan(this.energies, upper);
+      const upperInd = Math.min(this.maxIndexLessThan(this.energies, upper));
       return [lowerInd, upperInd];
     }
   
@@ -139,7 +150,7 @@ export class Processor {
         this.BFBE[isotope["name"] + "_" + isotope["energy"]] = {
           total_hits: leftCoupsTotal,
           hits_per_channel: leftCoupsPerCanal,
-          indices: [leftIndex - isotope["nb_canaux_BFBE"], leftIndex + 1]
+          indices: [leftIndex - isotope["nb_canaux_BFBE"], Math.min(leftIndex + 1, 8191)]
         };
   
         const energyValRight = +isotope["energy"] + +isotope["limit_HE_Rpic_right"];
@@ -151,7 +162,7 @@ export class Processor {
         this.BFHE[isotope["name"] + "_" + isotope["energy"]] = {
           total_hits: rightCoupsTotal,
           hits_per_channel: rightCoupsPerCanal,
-          indices: [rightIndex, +rightIndex + +isotope["nb_canaux_BFHE"] + 1]
+          indices: [rightIndex, Math.min(+rightIndex + +isotope["nb_canaux_BFHE"] + 1, 8191)]
         };
   
         const countsPortion = this.counts.slice(lowerInd, upperInd + 1);
@@ -245,7 +256,11 @@ export class Processor {
       })
       return returnData;
     }
-  
+    
+    peakAnalysisForRequiredPeaks() {
+
+    } 
+
     sum(array) {
       return array.reduce((acc, val) => acc + val, 0);
     }

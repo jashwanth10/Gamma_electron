@@ -11,6 +11,7 @@ import Dropdown from "../components/dropDown";
 import Dashboard from "../components/dashboard";
 import ValidationOptions from "../components/validation-options";
 import InfoIconWithTooltip from "../components/tooltip";
+import MixedChart from "../components/mixedChart";
 
 
 function Validation() {
@@ -32,6 +33,7 @@ function Validation() {
     const [peakPlotData, setPeakPlotData] = useState(null);
     const [overlays, setOverlays] = useState(null);
     const [coeffs, setCoeffs] = useState([]);
+    const [currentScreen, setCurrentScreen] = useState(0); // State to track current screen
 
     useEffect(() => {
         setDropDownData(activeProfileData.map((isotope) => isotope.name));
@@ -121,7 +123,7 @@ function Validation() {
         const energies = activeProfiles.map(isotope => 
             processor.peakCalibration(processor.peaks[isotope["name"] + "_" + isotope["energy"]])
         );
-    
+        
         // x-axis
         const peaks = activeProfiles.map(isotope => 
             isotope["name"]
@@ -131,14 +133,30 @@ function Validation() {
             "peaks": peaks 
         }
 
-        setFittingData(graphData);
+        const energyAxis = processor.channels.map(x => processor.peakCalibration(x));      
+        const countAxis = processor.channels;
+
+        const lineData = energyAxis.map((energy, index) => ({
+            'x': countAxis[index],
+            'y': energy,
+        }));
+
+        const scatterData  = activeProfiles.map((isotope, index) => ({
+            'x': processor.peaks[isotope["name"] + "_" + isotope["energy"]],
+            'y': isotope["energy"]
+        }));
+
+        const graphNewData = {
+            "line": lineData,
+            "scatter": scatterData
+        }
+        setFittingData(graphNewData);
     }
 
     const handleSelectedItem = (dropdownItem) => {
         setSelectedPeak(dropdownItem);
     }
 
-    const [currentScreen, setCurrentScreen] = useState(0); // State to track current screen
 
     const toggleOverlay = () => {
         setOverlayOpen(!overlayOpen);
@@ -169,7 +187,10 @@ function Validation() {
     };
 
     const handleNext = () => {
-        navigate('/ref', {state: {peakPlotData}});
+        const energies = processorObj.energies;
+        const counts = processorObj.counts;
+        const channels = processorObj.channels;
+        navigate('/ref', {state: {peakPlotData, energies, counts, channels}});
     };
 
 
@@ -201,7 +222,7 @@ function Validation() {
                         <div class="text-3xl mb-8">
                                 Energy Calibraation
                             </div>
-                            {fittingData && (<LineGraph data={fittingData} xAxis={'peaks'} yAxis={'energies'} radius={5} xlabel={'Channel'} ylabel={'Energy (keV)'}/>)}
+                            {fittingData && (<MixedChart lineData={fittingData["line"]} scatterData={fittingData["scatter"]}/>)}
                     </div>
                     <div class="w-full h-full flex flex-col justify-center items-center">
                         

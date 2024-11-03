@@ -9,7 +9,8 @@ const startUrl = url.format({
 
 const datastore = {
   "profilesDb": new Datastore({ filename: './db/profiles.db', autoload: true }),
-  "peaksDb": new Datastore({filename: './db/peaks.db', autoload: true})
+  "peaksDb": new Datastore({filename: './db/peaks.db', autoload: true}),
+  "activityPeaksDb": new Datastore({filename: './db/activityPeaks.db', autoload: true})
 }
 
 const createWindow = () => {
