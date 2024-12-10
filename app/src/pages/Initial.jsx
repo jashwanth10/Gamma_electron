@@ -1,24 +1,24 @@
 import { useState } from "react";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import LineGraph from "../components/lineGraph";
 import { useNavigate } from "react-router-dom";
 import Dashboard from "../components/dashboard";
 import TextBox from "../components/textbox";
-import { setSampleData } from "../features/sampleData";
+import { setSampleData } from "../features/sampleDataSlice";
 
 
 function Initial() {
 
     const fileData = useSelector((state) => state.fileData);
-    const sampleData = useSelector((state) => state.sampleData);
 
     const [weight, setWeight] = useState("");
     const [error, setError] = useState("");
+    const dispatch = useDispatch();
+
 
     const validateInput = (value) => {
         const rationalRegex = /^(0|[1-9]\d*)(\.\d*)?$/;
-        console.log("hel");
         if (value === '' || rationalRegex.test(value)) {
           setError("");
           setWeight(value);
@@ -40,12 +40,15 @@ function Initial() {
         if(weight == ""){
             setError("Please enter the sample weight");
         }else{
-            setSampleData({
-                "weight": weight,
-                "liveTime": fileData["liveTime"],
-                "deadTime": fileData["realTime"]
-            })
-            navigate('/profile')
+            dispatch(
+                setSampleData({
+                    "weight": +weight,
+                    "liveTime": fileData["liveTime"],
+                    "deadTime": fileData["realTime"]
+                })
+            );
+            
+            navigate('/profile');
         }
     }
 
@@ -72,6 +75,7 @@ function Initial() {
                     />
                     {error && (<p>{error}</p>)}
                     <div class="w-full h-full flex justify-center items-center">
+                        {/* <UraniumSeriesChart/> */}
                         <LineGraph data={fileData} xAxis={'energy'} yAxis={'channelData'} xlabel={'Energy (keV)'} ylabel={'Count/Channel'} stepSize={600}/>
                     </div>
                      

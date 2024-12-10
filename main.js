@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path');
 const Datastore = require('nedb')
+const fs = require('fs');
 const startUrl = url.format({
   pathname: path.join(__dirname, './gamma/build/index.html'),
   protocol: 'file',
@@ -70,6 +71,39 @@ const createWindow = () => {
         resolve(numRemoved);
       });
     });
+  });
+
+  ipcMain.handle('read-csv', async (event, filePath) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf-8', (err, data) => {
+          if(err){
+            return reject(err);
+          }
+          resolve(data);
+        });
+    });
+  });
+
+  ipcMain.handle('write-csv', async (event, filePath, content) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filePath, content, 'utf-8', (err) => {
+          if(err){
+            return reject(err);
+          }
+        });
+    });
+  });
+
+  ipcMain.handle('get-csv-path', async (event) => {
+      try {
+        const csvPath = path.join(__dirname, 'meta', 'sample.csv');
+        if (!fs.existsSync(csvPath)) {
+          throw new Error('The file sample.csv does not exist in the meta directory.');
+        }
+        return csvPath;
+      } catch (err) {
+        throw err;
+      }
   });
 }
 

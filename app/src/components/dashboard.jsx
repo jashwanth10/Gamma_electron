@@ -21,7 +21,7 @@ const Dashboard = ({handlerNext, showNext=true}) => {
   };
 
   return (
-      <div className="left-0 w-full flex justify-center p-4 bg-base-100">
+      <div className="left-0 w-full flex justify-center p-4 bg-base-190">
         <div className="space-x-4">
             <button className="btn btn-primary z-10" onClick={handlePrev}>Prev</button>
             {showNext && ( <button className="btn btn-primary z-10" onClick={() => handlerNext()}>Next</button>)}

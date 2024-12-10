@@ -9,8 +9,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PeakAnalysis from './pages/PeakAnalysis';
 import Catalogue from './pages/Catalogue';
 import Ref from './pages/Ref';
-import Activity from './pages/Activity';
 import Analysis from './pages/Analysis';
+import Results from './pages/Results';
+import Metadata from './pages/metadata';
 
 function App() {
   return (
@@ -25,8 +26,9 @@ function App() {
             <Route path="/peak-analysis" element={<PeakAnalysis/>}/>
             <Route path="/catalogue" element={<Catalogue/>}/>
             <Route path="/ref" element={<Ref/>}/>
-            <Route path="/activity" element={<Activity/>}/>
             <Route path="/analysis" element={<Analysis/>}/>
+            <Route path="/results" element={<Results/>}/>
+            <Route path="/metadata" element={<Metadata/>}/>
 
 
           </Routes>

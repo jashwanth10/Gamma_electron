@@ -1,8 +1,8 @@
 export class Processor {
-    constructor(data={}, aciveProfileData={}, name='default') {
+    constructor(data={}, activeProfileData={}, name='default') {
       this.data = data;
       this.name = name;
-      this.aciveProfileData = aciveProfileData;
+      this.activeProfileData = activeProfileData;
       this.channels = this.data['channels'];
       this.counts = this.data['channelData'];
       this.energies = this.data['energy'];
@@ -28,14 +28,35 @@ export class Processor {
       this.A0 = -0.142243060813477;
       this.A1 = 0.189584314029758;
       this.A2 =  2.86540639520303 * Math.pow(10, -9);
+
+    }
+
+    getRefCurveData(){
+      return [
+        {x: 46.539, y: 0.58},
+        {x: 59.5409, y: 0.59},
+        {x: 63.29, y:0.59},
+        {x:67.672, y:0.61},
+        {x:129.07, y:0.79},
+        {x:238.632, y:0.90},
+        {x:295.2228, y:0.88},
+        {x:338.32, y:0.99},
+        {x:351.9321, y:0.98},
+        {x:609.32, y:1.19},
+        {x:661.657, y:1.21},
+        {x:911.2040, y:1.46},
+        {x:968.971, y:1.51},
+        {x:1120.294, y:1.59},
+        {x:1460.822, y:1.87}
+      ]
     }
   
     analyze() {
       this.energies = this.channels.map(x => this.peakCalibration(x));
-      this.calculateInterestRegion(this.aciveProfileData);
-      this.calculateFwhm(this.aciveProfileData);
-      this.calculatePeakPositions(this.aciveProfileData);
-      this.calculateNarrowPeakPortion(this.aciveProfileData);
+      this.calculateInterestRegion(this.activeProfileData);
+      this.calculateFwhm(this.activeProfileData);
+      this.calculatePeakPositions(this.activeProfileData);
+      this.calculateNarrowPeakPortion(this.activeProfileData);
     }
 
     activityCalculationStepOne (peakData) {
@@ -81,6 +102,11 @@ export class Processor {
             (this.BFBE[isotope["name"] + "_" + isotope["energy"]]?.hits_per_channel + this.BFHE[isotope["name"] + "_" + isotope["energy"]]?.hits_per_channel) / 2
           ))
         };
+
+        // Lc Calculation
+        let dic = this.roi[isotope["name"] + "_" + isotope["energy"]];
+        this.roi[isotope["name"] + "_" + isotope["energy"]]["lc"] = 1.645 * Math.pow((dic.total_bf_under_peak*(1 + dic.num_channels/(isotope["nb_canaux_BFBE"] + isotope["nb_canaux_BFHE"]))), 0.5); 
+        
         let temp_sum = 0;
         for(var i=0;i<this.coupsNet[isotope["name"] + "_" + isotope["energy"]].length;i++){
           temp_sum += this.coupsNet[isotope["name"] + "_" + isotope["energy"]][i] * this.channelsPortion[isotope["name"] + "_" + isotope["energy"]][i];
@@ -111,22 +137,28 @@ export class Processor {
       });
     }
 
-    optimizeCoefficients() {
-      this.calculateNewCoeff();
+    optimizeCoefficients(interestPeaks) {
+      this.calculateNewCoeff(interestPeaks);
       this.energies = this.channels.map(x => this.peakCalibration(x));
-      this.analyze()
+      this.analyze();
     }
 
-    calculateNewCoeff() {
-      const profileEnergies = this.aciveProfileData.map((x) => +x["energy"]);
-      const M3 = this.sum(Object.values(this.peaks));
-      const M4 = Object.keys(this.peaks).length;
-      const M5 = this.sum(Object.values(profileEnergies));
-      const M6 = this.sumSq(Object.values(this.peaks));
-      const M7 = this.sumQu(Object.values(this.peaks));
-      const M8 = this.sumPow4(Object.values(this.peaks));
-      const M9 = this.sumProd(profileEnergies, Object.values(this.peaks));
-      const M10 = this.sumProdSquare(profileEnergies, Object.values(this.peaks));
+    calculateNewCoeff(interestPeaks) {
+      const profileEnergies = Array.from(interestPeaks.map((x) => +x["energy"]));
+      const profilePeakNames = Array.from(interestPeaks.map((x) => x["name"] + "_" + x["energy"]));
+      const profilePeaks0 = Object.keys(this.peaks).filter(x => profilePeakNames.includes(x));
+      const profilePeaks = profilePeaks0.map(x => this.peaks[x]);
+
+      console.log("[pp ", profileEnergies, profilePeakNames,  profilePeaks, this.peaks);
+
+      const M3 = this.sum(profilePeaks);
+      const M4 = profilePeaks.length;
+      const M5 = this.sum(profileEnergies);
+      const M6 = this.sumSq(profilePeaks);
+      const M7 = this.sumQu(profilePeaks);
+      const M8 = this.sumPow4(profilePeaks);
+      const M9 = this.sumProd(profileEnergies, profilePeaks);
+      const M10 = this.sumProdSquare(profileEnergies, profilePeaks);
 
       const M12 = M4*(M6*M8-M7*M7) - M3*(M3*M8-M6*M7) + M6*(M3*M7-M6*M6);
 
@@ -238,8 +270,8 @@ export class Processor {
             "BFHE": this.BFHE[isotope["name"] + "_" + isotope["energy"]],
             "region": this.roi[isotope["name"] + "_" + isotope["energy"]],
             "pic": this.roiPeak[isotope["name"] + "_" + isotope["energy"]],
-            "sigma": this.sigma[isotope["name"] + "_" + isotope["energy"]],
-            "intensity": this.intensity[isotope["name"] + "_" + isotope["energy"]],
+            "sigma": +this.roi[isotope["name"] + "_" + isotope["energy"]]["lc"] < +this.intensity[isotope["name"] + "_" + isotope["energy"]] ? this.sigma[isotope["name"] + "_" + isotope["energy"]] : 0,
+            "intensity": +this.roi[isotope["name"] + "_" + isotope["energy"]]["lc"] < +this.intensity[isotope["name"] + "_" + isotope["energy"]] ? this.intensity[isotope["name"] + "_" + isotope["energy"]] : 0,
             "results": {
                 "fwhm": this.fwhm[isotope["name"] + "_" + isotope["energy"]],
                 "peak_channel": this.peaks[isotope["name"] + "_" + isotope["energy"]],
@@ -251,7 +283,8 @@ export class Processor {
               { "label": 'Counts', "data": y1, "borderColor": 'blue', "fill": false, "pointRadius": 0 },
               { "label": 'BF Step', "data": y3, "borderColor": 'red', "fill": false, "pointRadius": 0 },
               { "label": 'Peak', "data": y4, "borderColor": 'green', "fill": false, "pointRadius": 0 }
-            ]
+            ],
+            
         })
       })
       return returnData;

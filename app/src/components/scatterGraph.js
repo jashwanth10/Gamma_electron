@@ -5,7 +5,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 
 Chart.register(...registerables, zoomPlugin);
 
-const ScatterGraph = ({data, xlabel=null, ylabel=null}) => {
+const ScatterGraph = ({data, xlabel=null, ylabel=null, name="chart"}) => {
   const chartRef = useRef(null);
   const graphData =  {
     datasets: [
@@ -58,7 +58,7 @@ const ScatterGraph = ({data, xlabel=null, ylabel=null}) => {
     }
   }
 
-  const saveChartAsImage = (format = 'png') => {
+  const saveChartAsImage = (format = 'png', name='chart') => {
     const chart = chartRef.current;
     if (!chart) return;
 
@@ -80,13 +80,13 @@ const ScatterGraph = ({data, xlabel=null, ylabel=null}) => {
     // Create a download link
     const link = document.createElement('a');
     link.href = base64Image;
-    link.download = `chart.${format}`;
+    link.download = `${name}.${format}`;
     link.click();
   };
 
   return (
     <div class="relative w-3/4 h-3/4 flex justify-center items-center">
-        <button className="btn btn-primary btn-xs absolute top-2 right-2" onClick={() => saveChartAsImage('jpeg')}>
+        <button className="btn btn-primary btn-xs absolute top-2 right-2" onClick={() => saveChartAsImage('jpeg', name)}>
           <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-3 h-3"
