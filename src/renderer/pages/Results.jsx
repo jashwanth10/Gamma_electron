@@ -30,11 +30,7 @@ function Results() {
             </thead>
             <tbody>
                     <tr key={1}>
-<<<<<<< HEAD
-                        <th>Abundance(Bq/kg)</th>
-=======
                         <th>Abundance(ppm)</th>
->>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
                         <td>{tableData[1]["238U"][0].toFixed(2)} ± {tableData[1]["238U"][1].toFixed(2)}</td>
                         <td>{tableData[1]["226Ra"][0].toFixed(2)} ± {tableData[1]["226Ra"][1].toFixed(2)}</td>
                         <td>{tableData[1]["210Pb"][0].toFixed(2)} ± {tableData[1]["210Pb"][1].toFixed(2)}</td>

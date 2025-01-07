@@ -111,7 +111,6 @@ export class Processor {
 
         // Lc Calculation
         let dic = this.roi[isotope["name"] + "_" + isotope["energy"]];
-        // console.log("BF total soup: ", dic.total_bf_under_peak, ", nb canaux pic: ", dic.num_channels, ", BFH+BFBE: ", isotope["nb_canaux_BFBE"] + isotope["nb_canaux_BFHE"]);
         this.roi[isotope["name"] + "_" + isotope["energy"]]["lc"] = 1.645 * Math.pow((dic.total_bf_under_peak*(1 + dic.num_channels/(Number(isotope["nb_canaux_BFBE"]) + Number(isotope["nb_canaux_BFHE"])))), 0.5); 
         let temp_sum = 0;
         for(var i=0;i<this.coupsNet[isotope["name"] + "_" + isotope["energy"]].length;i++){
@@ -123,7 +122,6 @@ export class Processor {
 
         // Activity calculation
         this.intensity[isotope["name"] + "_" + isotope["energy"]] =this.roi[isotope["name"] +"_"+ isotope["energy"]]["total_hits"] - this.sum(this.bfStep[isotope["name"] + "_" + isotope["energy"]])
-        // console.log("Pea name: ", isotope["name"]+"_"+isotope["energy"], ", Lc: ", this.roi[isotope["name"] + "_" + isotope["energy"]]["lc"], "Intens: ", this.intensity[isotope["name"] + "_" + isotope["energy"]]);
         
         this.sigma[isotope["name"] + "_" + isotope["energy"]] = Math.sqrt(+this.roi[isotope["name"] +"_"+ isotope["energy"]]["total_hits"]
           + (((this.roi[isotope["name"] + "_" +isotope["energy"]]["num_channels"] / isotope["nb_canaux_BFBE"]) ** 2 )*(this.BFBE[isotope["name"] + "_" + isotope["energy"]]["total_hits"]/4)
@@ -183,11 +181,8 @@ export class Processor {
         const upper = +isotope["energy"] + +isotope["limit_HE_Rpic_left"];
         const [lowerInd, upperInd] = this.extractPortions(lower, upper);
         const energyValLeft = isotope["energy"] - isotope["limit_BE_Rpic_right"];
-<<<<<<< HEAD
-=======
         // const energyValLeft = (isotope["name"] == "40K_1460.822") ? isotope["energy"] - isotope["limit_HE_Rpic_left"] : isotope["energy"] - isotope["limit_BE_Rpic_right"];
 
->>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         const leftIndex = this.minIndexGreaterThan(this.energies, energyValLeft);
         const leftCountPortion = this.counts.slice(leftIndex - isotope["nb_canaux_BFBE"], leftIndex);
         const leftCoupsTotal = this.sum(leftCountPortion);

@@ -54,10 +54,6 @@ function Profile() {
     const handleChooseProfile = async (name) => {
         try {
             const doc = await window.api.getData("profilesDb", {"profile_name": name});
-<<<<<<< HEAD
-=======
-            console.log(doc);
->>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
             dispatch(setActiveProfile(doc[0].peaks));
             navigate('/Validation')
         } catch (error) {

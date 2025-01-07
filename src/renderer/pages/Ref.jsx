@@ -77,8 +77,6 @@ function Ref() {
             data.push(processor.activityCalculationStepOne(cosm_series));
             // data.push(processor.activityCalculationStepOne(xray_series));
             
-            console.log("Data: ", data);
-
             const names = data.map(x => x.map(y => y["name"].split("_")[0])).flat();
 
             processor.activeProfileData = activityPeaksData;
