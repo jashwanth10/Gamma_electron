@@ -87,7 +87,13 @@ function copyDatabaseFiles() {
   ['profiles.db', 'peaks.db', 'activityPeaks.db'].forEach(file => {
     const src = path.join(resourcePath, file);
     const dest = path.join(dbPath, file);
+<<<<<<< HEAD
     fs.copyFileSync(src, dest);
+=======
+    if (!fs.existsSync(dest)) {
+      fs.copyFileSync(src, dest);
+    }
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
   });
 
   ["background.csv",  "efficiency.csv", "count_rate.csv", "efficiency_v2.csv", "emission_rate.csv"].forEach(file => {

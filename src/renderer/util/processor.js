@@ -183,6 +183,11 @@ export class Processor {
         const upper = +isotope["energy"] + +isotope["limit_HE_Rpic_left"];
         const [lowerInd, upperInd] = this.extractPortions(lower, upper);
         const energyValLeft = isotope["energy"] - isotope["limit_BE_Rpic_right"];
+<<<<<<< HEAD
+=======
+        // const energyValLeft = (isotope["name"] == "40K_1460.822") ? isotope["energy"] - isotope["limit_HE_Rpic_left"] : isotope["energy"] - isotope["limit_BE_Rpic_right"];
+
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         const leftIndex = this.minIndexGreaterThan(this.energies, energyValLeft);
         const leftCountPortion = this.counts.slice(leftIndex - isotope["nb_canaux_BFBE"], leftIndex);
         const leftCoupsTotal = this.sum(leftCountPortion);

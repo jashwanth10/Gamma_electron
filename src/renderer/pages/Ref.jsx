@@ -32,7 +32,6 @@ function Ref() {
         fetchData();
 
         const proc = new Processor(sampleData.energyCoefficients);
-        console.log(sampleData.energyCoefficients);
         proc.energies = energies;
         proc.channels = channels;
         proc.counts = counts;

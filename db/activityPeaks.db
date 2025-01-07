@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 {"series":"potassium","name_0":"40K","name":"40K","energy":"1460.822","ref":"","limit_BE_Rpic_left":"5","limit_BE_Rpic_right":"3","limit_HE_Rpic_left":"5","limit_HE_Rpic_right":"3","nb_canaux_BFBE":"20","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"3TlGaLf5vWQyXAUV"}
+=======
+{"series":"potassium","name_0":"40K","name":"40K","energy":"1460.822","ref":"","limit_BE_Rpic_left":"5","limit_BE_Rpic_right":"5","limit_HE_Rpic_left":"3","limit_HE_Rpic_right":"3","nb_canaux_BFBE":"20","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"3TlGaLf5vWQyXAUV"}
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
 {"series":"uranium_decay","name_0":"238U","name":"234Th","energy":"63.29","ref":"","limit_BE_Rpic_left":"0.8","limit_BE_Rpic_right":"1.5","limit_HE_Rpic_left":"1","limit_HE_Rpic_right":"1.2","nb_canaux_BFBE":"5","nb_canaux_BFHE":"7","larger_region_pic":"3","range":"56","_id":"AGsA4FQWsg1zKSVf"}
 {"series":"uranium_decay","name_0":"238U","name":"230Th","energy":"67.672","ref":"","limit_BE_Rpic_left":"1.5","limit_BE_Rpic_right":"2","limit_HE_Rpic_left":"1","limit_HE_Rpic_right":"1","nb_canaux_BFBE":"5","nb_canaux_BFHE":"7","larger_region_pic":"3","range":"39","_id":"BGsA4FQWsg1zKSVf"}
 {"series":"uranium_decay","name_0":"238U","name":"234Th","energy":"92.59","ref":"","limit_BE_Rpic_left":"1.5","limit_BE_Rpic_right":"0.8","limit_HE_Rpic_left":"3.2","limit_HE_Rpic_right":"3.5","nb_canaux_BFBE":"4","nb_canaux_BFHE":"5","larger_region_pic":"3","range":"129","_id":"1EJc2N3ffvwIs1e8"}

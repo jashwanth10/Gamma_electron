@@ -1,6 +1,10 @@
 {"name":"PbKa2 - Flourescence and 208Tl decay","energy":"72.81","ref":"","limit_BE_Rpic_left":"0.9","limit_BE_Rpic_right":"1.2","limit_HE_Rpic_left":"0.9","limit_HE_Rpic_right":"0.8","nb_canaux_BFBE":"8","nb_canaux_BFHE":"2","larger_region_pic":"3","range":"75","_id":"1EJc2N3ffvwIs1e8"}
 {"name":"Pb-214","energy":"295.2228","ref":"","limit_BE_Rpic_left":"1.5","limit_BE_Rpic_right":"2","limit_HE_Rpic_left":"1.7","limit_HE_Rpic_right":"7","nb_canaux_BFBE":"20","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"2A8g5FFdtsavF3v9"}
+<<<<<<< HEAD
 {"name":"K-40","energy":"1460.83","ref":"","limit_BE_Rpic_left":"3","limit_BE_Rpic_right":"3","limit_HE_Rpic_left":"3","limit_HE_Rpic_right":"3","nb_canaux_BFBE":"20","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"4CXB8m2pzbVePvy1"}
+=======
+{"name":"K-40","energy":"1460.822","ref":"","limit_BE_Rpic_left":"3","limit_BE_Rpic_right":"3","limit_HE_Rpic_left":"3","limit_HE_Rpic_right":"3","nb_canaux_BFBE":"20","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"4CXB8m2pzbVePvy1"}
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
 {"name":"Th-234","energy":"63.29","ref":"","limit_BE_Rpic_left":"0.8","limit_BE_Rpic_right":"1.5","limit_HE_Rpic_left":"1","limit_HE_Rpic_right":"1.2","nb_canaux_BFBE":"5","nb_canaux_BFHE":"7","larger_region_pic":"3","range":"56","_id":"AGsA4FQWsg1zKSVf"}
 {"name":"Ac-228","energy":"911.204","ref":"","limit_BE_Rpic_left":"2.3","limit_BE_Rpic_right":"2","limit_HE_Rpic_left":"2.2","limit_HE_Rpic_right":"2","nb_canaux_BFBE":"15","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"AsBHQBRrqLJSqwgs"}
 {"name":"Bi-214","energy":"1764.491","ref":"","limit_BE_Rpic_left":"3","limit_BE_Rpic_right":"3","limit_HE_Rpic_left":"3","limit_HE_Rpic_right":"3","nb_canaux_BFBE":"20","nb_canaux_BFHE":"20","larger_region_pic":"3","range":"129","_id":"NNy1iKzUHJSdpWjs"}

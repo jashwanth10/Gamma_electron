@@ -36,10 +36,22 @@ function Validation() {
     const [overlays, setOverlays] = useState(null);
     const [coeffs, setCoeffs] = useState(fileData.energyCoefficients);
     const [currentScreen, setCurrentScreen] = useState(0); 
+<<<<<<< HEAD
+=======
+    const [saveCoeffs, setSaveCoeffs] = useState(true);
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
 
     const notIncludedResidualPeaks = ["241Am_59.5409", "137Cs_661.657", "228Ac_968.971", "228Ac_129.07", "230Th_67.672"];
     useEffect(() => {
         setDropDownData(activeProfileData.map((isotope) => isotope.name + " (" + isotope.energy + " keV)"));
+<<<<<<< HEAD
+=======
+        if(sampleData.energyCoefficients.length > 0){
+            setCoeffs(sampleData.energyCoefficients);
+        }else{
+            setCoeffs(fileData.energyCoefficients);
+        }
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         const processor = new Processor(sampleData.energyCoefficients.length == 0 ? fileData.energyCoefficients : sampleData.energyCoefficients, fileData, activeProfileData);
         processor.analyze();
         const dat = processor.performPeakAnalysis(activeProfileData);
@@ -48,6 +60,10 @@ function Validation() {
         calculateResidualData(processor);
         calculateFWHMCurve(processor);
         calculateFittingCurve(processor);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
     }, [])
 
     const calculateResidualData = (processor) => {
@@ -78,7 +94,11 @@ function Validation() {
             const match = key.match(/_(\d+).(\d+)$/);
             return match ? parseInt(match[1], 10) : 0; // Extract number or return 0 if no match
         }
+<<<<<<< HEAD
         const interestPeaks = [46.539, 63.29, 238.632, 295.2228, 338.32, 351.9321, 609.32, 911.204, 1120.294, 1460.83]
+=======
+        const interestPeaks = [46.539, 63.29, 238.632, 295.2228, 338.32, 351.9321, 609.32, 911.204, 1120.294, 1460.822]
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         const sorted_fwhm = Object.keys(processor.fwhm)
         .sort((a, b) => getSuffix(a) - getSuffix(b))
         .reduce((acc, key) => {
@@ -172,10 +192,18 @@ function Validation() {
         const energies = processorObj.energies;
         const counts = processorObj.counts;
         const channels = processorObj.channels;
+<<<<<<< HEAD
+=======
+        setCoeffs(sampleData.energyCoefficients);
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         navigate('/ref', {state: {peakPlotData, energies, counts, channels, processorObj}});
     };
 
     const handleRetainCoeffs = () => {
+<<<<<<< HEAD
+=======
+        setSaveCoeffs(true);
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         dispatch(
             setSampleData({
                 ...sampleData,
@@ -185,13 +213,21 @@ function Validation() {
     }
 
     const handleRevertCoeffs = () => {
+<<<<<<< HEAD
+=======
+        setSaveCoeffs(false);
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         dispatch(
             setSampleData({
                 ...sampleData,
                 "energyCoefficients": fileData.energyCoefficients
             })
         )
+<<<<<<< HEAD
         console.log(activeProfileData);
+=======
+        setCoeffs(fileData.energyCoefficients);
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         processorObj.setEnergyCoefficients(fileData.energyCoefficients);
         calculateResidualData(processorObj);
         calculateFWHMCurve(processorObj);
@@ -199,6 +235,10 @@ function Validation() {
     }
 
     const handlerIteration = () => {
+<<<<<<< HEAD
+=======
+        setSaveCoeffs(false);
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
         const energyCoeffs = processorObj.optimizeCoefficients(activeProfileData);
         setCoeffs(energyCoeffs);
         setProcessorObj(processorObj);
@@ -232,6 +272,7 @@ function Validation() {
                             {fittingData && (<MixedChart lineData={fittingData["line"]} scatterData={fittingData["scatter"]} name="energy-reference-chart"/>)}
                         </div>
                         <div >
+<<<<<<< HEAD
                             <div className="text-xl mb-8">
                                 Energy Coefficients: E(x) = A2.x² + A1.x + A0
                             </div>
@@ -242,12 +283,33 @@ function Validation() {
                                     <div>A2: {sampleData.energyCoefficients[2]}</div>
                                 </div>
                             ) : (
+=======
+                            <div className="text-xl mb-4">
+                                Energy Coefficients: E(x) = A2.x² + A1.x + A0
+                            </div>
+                            {!saveCoeffs && (
+                                <div className="mb-2 text-red-300">
+                                Please Click on "Retain Coefficients" to save the following coefficients.
+                              </div>
+                            )}
+                            {/* {sampleData.energyCoefficients.length > 0 ? ( */}
+                                <div>
+                                    <div>A0: {coeffs[0]}</div>
+                                    <div>A1: {coeffs[1]}</div>
+                                    <div>A2: {coeffs[2]}</div>
+                                </div>
+                            {/* ) : (
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
                                 <div>
                                     <div>A0: {fileData.energyCoefficients[0]}</div>
                                     <div>A1: {fileData.energyCoefficients[1]}</div>
                                     <div>A2: {fileData.energyCoefficients[2]}</div>
                                 </div>
+<<<<<<< HEAD
                             )}
+=======
+                            )} */}
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
                             
                         </div>
                     </div>

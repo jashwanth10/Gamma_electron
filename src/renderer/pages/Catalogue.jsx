@@ -58,8 +58,14 @@ const Catalogue = () => {
             setError(null);
             const doc = await window.api.insertData("profilesDb",{"profile_name": profileName, "peaks": selectedItems});
             alert("New Profile: " + profileName + " created!")
+<<<<<<< HEAD
             sleep(2000).then(() => {
                 navigate('/validation');
+=======
+            console.log("New profile: ", doc);
+            sleep(2000).then(() => {
+                navigate('/profile');
+>>>>>>> 7b7881f (Changes suggested by mail on 12/27/24)
             })
             // Fetch updated data only if necessary
         } catch (error) {
